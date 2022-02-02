@@ -1,0 +1,251 @@
+                    {% extends "index.html" %}
+                    {% block ZKTbox %} 
+                    {{ super() }}
+                    <div class="row">
+                    <!-- Orders (Monthly) Card Example -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Orders (MTDP)</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{App_dic.MTDP_total_order}}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-calculator fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Revenue (Monthly) Card Example -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Revenue (MTDP)</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{App_dic.MTDP_total_revenue}}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-dollar fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Mgmt Fee (Monthly) Card Example -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Mgmt Fee (MTDP)</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{App_dic.MTDP_total_mgmt_fee}}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-dollar fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                                                
+                    <!-- Profit (Monthly) Card Example -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Profit (MTDP)</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{App_dic.MTDP_total_profit}}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="row">  
+                    <!-- Orders (Monthly) Card Example -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Orders (Mini App)</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{App_dic.MiniApp_total_order}}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-calculator fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Revenue (Monthly) Card Example -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Revenue (Mini App)</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{App_dic.MiniApp_total_revenue}}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Mgmt Fee (Monthly) Card Example -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Mgmt Fee (Mini App)</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{App_dic.MiniApp_total_Mgmtfee}}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                        
+                    <!-- Associate Incentive (Monthly) Card Example -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Associate Incentive (Mini App)</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{App_dic.MiniApp_total_AssociatesIncentive}}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+
+                    <!-- Profit  Card Example -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Profit (Mini App)</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{App_dic.MiniApp_total_profit}}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="row">
+                    <!-- Content Row -->
+                    <div class="row">
+                        <!-- Orders (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                # of Orders (ZKT)</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{App_dic.ZKT_total_order}}</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-calculator fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Revenue (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Revenue (ZKT)</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{App_dic.ZKT_total_revenue}}</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-dollar fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Mgmt Fee  (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Mgmt Fee (ZKT)</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{App_dic.ZKT_total_mgmt_fee}}</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-dollar fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                        
+                        <!-- Associates Incentive (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Associates Incentive (ZKT)</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{App_dic.ZKT_total_associates_incentive}}</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-dollar fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>  
+                        <!-- Profit (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Profit (ZKT)</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{App_dic.ZKT_total_profits}}</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-dollar fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        {% endblock %}
