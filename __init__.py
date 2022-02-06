@@ -66,7 +66,7 @@ def analyze_zkt(ZKT_url):
     ZKT_csv["产品名称"]=ZKT_csv.apply(lambda row:row["产品名称"].strip(),axis=1)
     ZKT_csv["类型"]=ZKT_csv.apply(lambda row: row["类型"].strip(),axis=1)
     ZKT_csv["order"] = ZKT_csv.apply(lambda row: zkt_valid_order(row["类型"]),axis=1)
-
+    App_dic["ZKT_df"] = ZKT_csv
     #calculate 现金账户进项	交易服务费	系统服务费	营销推广费	实际结算
     #only calculate those transaction under normal type 
     #create pivot table for ZKT for "现金账户进项","交易服务费","系统服务费","营销推广费","实际结算","售价"
@@ -86,22 +86,23 @@ def index():
 
 
 def trim_date(input_date):
+    input_date = input_date.replace("`","")
     trime_date = input_date[0:11].replace(" ","")
     return trime_date
 
 @app.route('/get_ZKT_piechart_data')
 def get_ZKT_piechart_data():
-    tmp_MiniApp_raw_df = App_dic["ZKT_df"]
-    MiniApp_df_pivot_table = pd.DataFrame()
-    while len(tmp_MiniApp_raw_df) > 0:
-        tmp_MiniApp_raw_df["date"] = tmp_MiniApp_raw_df.apply(lambda row: trim_date(row["订单时间"]),axis=1)
-        tmp_MiniApp_raw_df["revenue"] = tmp_MiniApp_raw_df["金额"]
-        tmp_MiniApp_raw_df_update = tmp_MiniApp_raw_df[["菜品名称","revenue"]]
-        tmp_MiniApp_raw_pivot_df = tmp_MiniApp_raw_df_update.groupby(by="菜品名称").sum()
-        tmp_MiniApp_raw_pivot_df = tmp_MiniApp_raw_pivot_df.reset_index()
+    tmp_ZKT_raw_df = App_dic["ZKT_df"]
+    ZKT_df_pivot_table = pd.DataFrame()
+    while len(tmp_ZKT_raw_df) > 0:
+        tmp_ZKT_raw_df["date"] = tmp_ZKT_raw_df.apply(lambda row: trim_date(row["结算日期"]),axis=1)
+        tmp_ZKT_raw_df["revenue"] = tmp_ZKT_raw_df["实际结算"]
+        tmp_ZKT_raw_df_update = tmp_ZKT_raw_df[["产品一级分类名称","revenue"]]
+        tmp_ZKT_raw_pivot_df = tmp_ZKT_raw_df_update.groupby(by="产品一级分类名称").sum()
+        tmp_ZKT_raw_pivot_df = tmp_ZKT_raw_pivot_df.reset_index()
         output_list = []
-        output_item_list = list(tmp_MiniApp_raw_pivot_df["菜品名称"])
-        output_revenue_list = list(tmp_MiniApp_raw_pivot_df["revenue"])
+        output_item_list = list(tmp_ZKT_raw_pivot_df["产品一级分类名称"])
+        output_revenue_list = list(tmp_ZKT_raw_pivot_df["revenue"])
         for i in range(len(output_item_list)):
             tmp_dic = {}
             tmp_revenue = output_revenue_list[i]
@@ -114,12 +115,12 @@ def get_ZKT_piechart_data():
 
 @app.route('/get_ZKT_linechart_data')
 def get_ZKT_linechart_data():
-    tmp_MiniApp_raw_df = App_dic["ZKT_df"]
-    while len(tmp_MiniApp_raw_df)>0:
+    tmp_ZKT_raw_df = App_dic["ZKT_df"]
+    while len(tmp_ZKT_raw_df)>0:
     
-        tmp_MiniApp_raw_df["date"] = tmp_MiniApp_raw_df.apply(lambda row: trim_date(row["订单时间"]),axis=1)
-        tmp_MiniApp_raw_df["revenue"] = tmp_MiniApp_raw_df["金额"]
-        output_raw_data = tmp_MiniApp_raw_df[["date","revenue"]]
+        tmp_ZKT_raw_df["date"] = tmp_ZKT_raw_df.apply(lambda row: trim_date(row["结算日期"]),axis=1)
+        tmp_ZKT_raw_df["revenue"] = tmp_ZKT_raw_df["实际结算"]
+        output_raw_data = tmp_ZKT_raw_df[["date","revenue"]]
 
         output_data = output_raw_data.groupby(by="date").sum()
        
@@ -139,17 +140,17 @@ def get_ZKT_linechart_data():
 
 @app.route('/get_MTDP_piechart_data')
 def get_MTDP_piechart_data():
-    tmp_MiniApp_raw_df = App_dic["MiniApp_df"]
-    MiniApp_df_pivot_table = pd.DataFrame()
-    while len(tmp_MiniApp_raw_df) > 0:
-        tmp_MiniApp_raw_df["date"] = tmp_MiniApp_raw_df.apply(lambda row: trim_date(row["订单时间"]),axis=1)
-        tmp_MiniApp_raw_df["revenue"] = tmp_MiniApp_raw_df["金额"]
-        tmp_MiniApp_raw_df_update = tmp_MiniApp_raw_df[["菜品名称","revenue"]]
-        tmp_MiniApp_raw_pivot_df = tmp_MiniApp_raw_df_update.groupby(by="菜品名称").sum()
-        tmp_MiniApp_raw_pivot_df = tmp_MiniApp_raw_pivot_df.reset_index()
+    tmp_MTDP_raw_df = App_dic["MTDP_df"]
+    MTDP_df_pivot_table = pd.DataFrame()
+    while len(tmp_MTDP_raw_df) > 0:
+        tmp_MTDP_raw_df["date"] = tmp_MTDP_raw_df.apply(lambda row: trim_date(row["消费|撤销时间"]),axis=1)
+        tmp_MTDP_raw_df["revenue"] = tmp_MTDP_raw_df["商家应得"]
+        tmp_MTDP_raw_df_update = tmp_MTDP_raw_df[["项目","revenue"]]
+        tmp_MTDP_raw_pivot_df = tmp_MTDP_raw_df_update.groupby(by="项目").sum()
+        tmp_MTDP_raw_pivot_df = tmp_MTDP_raw_pivot_df.reset_index()
         output_list = []
-        output_item_list = list(tmp_MiniApp_raw_pivot_df["菜品名称"])
-        output_revenue_list = list(tmp_MiniApp_raw_pivot_df["revenue"])
+        output_item_list = list(tmp_MTDP_raw_pivot_df["项目"])
+        output_revenue_list = list(tmp_MTDP_raw_pivot_df["revenue"])
         for i in range(len(output_item_list)):
             tmp_dic = {}
             tmp_revenue = output_revenue_list[i]
@@ -162,12 +163,12 @@ def get_MTDP_piechart_data():
 
 @app.route('/get_MTDP_linechart_data')
 def get_MTDP_linechart_data():
-    tmp_MiniApp_raw_df = App_dic["MiniApp_df"]
-    while len(tmp_MiniApp_raw_df)>0:
+    tmp_MTDP_raw_df = App_dic["MTDP_df"]
+    while len(tmp_MTDP_raw_df)>0:
     
-        tmp_MiniApp_raw_df["date"] = tmp_MiniApp_raw_df.apply(lambda row: trim_date(row["订单时间"]),axis=1)
-        tmp_MiniApp_raw_df["revenue"] = tmp_MiniApp_raw_df["金额"]
-        output_raw_data = tmp_MiniApp_raw_df[["date","revenue"]]
+        tmp_MTDP_raw_df["date"] = tmp_MTDP_raw_df.apply(lambda row: trim_date(row["消费|撤销时间"]),axis=1)
+        tmp_MTDP_raw_df["revenue"] = tmp_MTDP_raw_df["顾客实付"]
+        output_raw_data = tmp_MTDP_raw_df[["date","revenue"]]
 
         output_data = output_raw_data.groupby(by="date").sum()
        
@@ -287,7 +288,7 @@ def analyze_mtdp(MTDP_url):
     MTDP_df["order"] = 1
     MTDP_pivot_table = pd.pivot_table(MTDP_df,values=["原价","顾客实付","促销费","服务费","商家应得","order"],columns=["项目"],
                                         aggfunc={"原价":np.sum,"顾客实付":np.sum,"促销费":np.sum,"服务费":np.sum,"商家应得":np.sum,"order":np.sum})
-
+    App_dic["MTDP_df"] = MTDP_df
     MTDP_pivot_table_columns = MTDP_pivot_table.columns.to_list()
     MTDP_pivot_table_index = MTDP_pivot_table.index.to_list()
     MTDP_pivot_table_transpose = pd.DataFrame(MTDP_pivot_table.values.T,columns = MTDP_pivot_table_index, index = MTDP_pivot_table_columns)
