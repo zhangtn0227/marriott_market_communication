@@ -4,7 +4,14 @@ import xlrd
 import olefile
 import xlwings as xw
 import numpy as np
+from werkzeug.utils import secure_filename
+from werkzeug.datastructures import  FileStorage
 from datetime import timedelta
+import io
+import zipfile
+import time
+from io import BytesIO
+import os
 
 App_dic = {
             "MiniApp_df": pd.DataFrame(),
@@ -238,7 +245,34 @@ def get_MiniApp_linechart_data():
         
         return jsonify(output_list)
     
+@app.route('/download_files')
+def download_files():
+    export_path = "./export_files/"
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+    export_file_name = "export_files_{}.zip".format(timestr)
+    export_file_path = export_path + export_file_name
+    zipf = zipfile.ZipFile(export_file_path, 'w')
+    
 
+
+    if "MiniApp_output_name" in App_dic:
+        Mini_App_output_name = App_dic["MiniApp_output_name"]
+        Mini_App_path = export_path+Mini_App_output_name
+        zipf.write(Mini_App_path)
+
+    if "ZKT_output_name" in App_dic:
+        ZKT_App_output_name = App_dic["ZKT_output_name"]
+        ZKT_App_path = export_path+ZKT_App_output_name
+        zipf.write(ZKT_App_path)
+
+    if "MTDP_output_name" in App_dic:
+        MTDP_App_output_name = App_dic["MTDP_output_name"]
+        MTDP_App_path = export_path+MTDP_App_output_name
+        zipf.write(MTDP_App_path)
+
+
+    zipf.close()
+    return send_file(export_file_path,as_attachment=True, attachment_filename = export_file_name )
 
 
 @app.route('/Minidata', methods=[ 'POST'])
@@ -246,10 +280,16 @@ def Minidata():
     if request.method == 'POST':
         MiniApp_name = request.files['upload-file']
         #workbook = xlrd.open_workbook(MiniApp_name, ignore_workbook_corruption=True)
-        MiniApp_name_string = "./"+str(MiniApp_name.filename)
+        MiniApp_name_string = "./upload_files/"+secure_filename(MiniApp_name.filename)
+        MiniApp_name.save("./upload_files/"+secure_filename(MiniApp_name.filename))
+        
+
         MiniApp_result = analyze_miniApp(MiniApp_name_string)
-        MiniApp_output_path = "MiniApp_output.csv"
+        MiniApp_output_name = "MiniApp_output.csv"
+        MiniApp_output_path = "./export_files/MiniApp_output.csv"
         MiniApp_result.to_csv(MiniApp_output_path,encoding='utf-8_sig')
+        App_dic["MiniApp_output_name"] = MiniApp_output_name
+
         MiniApp_result_copy = MiniApp_result
         MiniApp_total_revenue = str(MiniApp_result_copy.loc[('Total','','',''),"金额"])
         #output at the same path
@@ -259,17 +299,22 @@ def Minidata():
         App_dic["MiniApp_total_AssociatesIncentive"] =  str(0)
         MiniApp_total_profit = float(MiniApp_total_revenue) - float(MiniApp_result_copy.loc[('Total','','',''),"Mgmt_Fee"])
         App_dic["MiniApp_total_profit"] = str(MiniApp_total_profit)
-
-        return render_template('miniapp_box.html',App_dic=App_dic)
+        
+        return render_template('index.html',App_dic=App_dic)
 
 @app.route('/ZKTdata', methods=['POST'])
 def ZKTdata():
     if request.method == 'POST':
         zkt_name = request.files['upload-file']
-        zkt_name_string = "./"+str(zkt_name.filename)
+        zkt_name_string = "./upload_files/"+secure_filename(zkt_name.filename)
+        zkt_name.save("./upload_files/"+secure_filename(zkt_name.filename))
+
         zkt_result = analyze_zkt(zkt_name_string)
-        zkt_output_path = "ZKT_output.csv"
+        zkt_output_name = "ZKT_output.csv"
+        zkt_output_path = "./export_files/ZKT_output.csv"
         zkt_result.to_csv(zkt_output_path,encoding='utf-8_sig')
+
+        App_dic["ZKT_output_name"] = zkt_output_name
         zkt_result_copy = zkt_result
         zkt_total_revenue= str(zkt_result_copy.loc[("Total",""),"现金账户进项"])
         App_dic["ZKT_total_revenue"]="￥"+str(zkt_total_revenue)
@@ -279,7 +324,7 @@ def ZKTdata():
         App_dic["ZKT_total_associates_incentive"] = "￥"+str(ZKT_total_associates_incentive)
         App_dic["ZKT_total_profits"] =  "￥"+str(zkt_result_copy.loc[("Total",""),"实际结算"])
         App_dic["ZKT_total_order"] = str(zkt_result_copy.loc[("Total",""),"order"])
-        return render_template('ZKT_box.html',App_dic=App_dic)
+        return render_template('index.html',App_dic=App_dic)
 
 
 def analyze_mtdp(MTDP_url):
@@ -300,25 +345,24 @@ def MTDPdata():
     #项目 原价	顾客实付	促销费	服务费	商家应得
     if request.method == 'POST':
         mtdp_name = request.files['upload-file']
-        mtdp_name_string = "./"+str(mtdp_name.filename)
+        mtdp_name_string = "./upload_files/"+str(mtdp_name.filename)
+        mtdp_name.save("./upload_files/"+secure_filename(mtdp_name.filename))
 
         MTDP_df = analyze_mtdp(mtdp_name_string)
+        MTDP_output_name = "MTDP_output.csv"
+        MTDP_output_path = "./export_files/MTDP_output.csv"
+
+        App_dic["MTDP_output_name"] = MTDP_output_name
         MTDP_df_copy = MTDP_df
         #print(MTDP_df_copy.index)
         App_dic["MTDP_total_revenue"] = str(MTDP_df_copy.loc["Total","顾客实付"])
-        MTDP_df.to_csv("MTDP_output.csv",encoding='utf-8_sig')
+        MTDP_df.to_csv(MTDP_output_path,encoding='utf-8_sig')
         MTDP_mgmt_fee = float(MTDP_df_copy.loc[["Total"],"促销费"])+float(MTDP_df_copy.loc[["Total"],"服务费"])
         App_dic["MTDP_total_mgmt_fee"] = MTDP_mgmt_fee
         App_dic["MTDP_total_order"] = float(MTDP_df_copy.loc[["Total"],"order"])
         App_dic["MTDP_total_profit"] = float(MTDP_df_copy.loc[["Total"],"商家应得"])
-        return render_template('MTDP_box.html',App_dic=App_dic)
+        return render_template('index.html',App_dic=App_dic)
 
-@app.route('/download')
-def download_file():
-    ZKT_summary_name ="ZKT_summary.xlsx"
-    ZKT_workbook(ZKT_summary_name)
-    ZKT_file.to_excel("download_output",'utf-8_sig')
-    #return send_file(ZKT_file, as_attachment = True)
 
 
 if __name__ == '__main__':
