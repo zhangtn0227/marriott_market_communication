@@ -1,39 +1,66 @@
-d3.queue()
-    .defer(linechart_func,lineChartDataUrl)
-    .defer(piechart_func,pieChartDataUrl)
-    .await(function(error){
+miniapp_queue = d3.queue();
+
+miniapp_queue.defer(MiniApp_linechart_func,MiniApp_lineChartDataUrl);
+miniapp_queue.defer(MiniApp_piechart_func,MiniApp_pieChartDataUrl)
+miniapp_queue.await(function(error){
         if(error) throw error;
         console.log("There is a error");
-    })
+    });
 
 
-function piechart_func(pieChartDataUrl) {
+function MiniApp_piechart_func(pieChartDataUrl) {
     
 
     // Create dummy data
     d3.json(pieChartDataUrl, function(error, d){
+
+
+        var tooltip = d3.select("#Miniapp_pieChart")
+		.append('div')
+		.attr('class', 'tooltip');
+
+		tooltip.append('div')
+		.attr('class', 'item');
+
+		tooltip.append('div')
+		.attr('class', 'revenue');
+
+		tooltip.append('div')
+		.attr('class', 'percent');
+
         var data ={};
+        var percentage_dic = {};
         var revenueMin = 0;
         var revenueMax = 0;
+        var total_revenue = 0;
         for (var i = 0; i <d.length; i++){
  
             var obj = d[i]["item"];
             var value =  parseFloat(d[i]["revenue"]);
+            total_revenue = total_revenue + value;
             revenueMin = Math.min(revenueMin,value);
             revenueMax = Math.max(revenueMax,value);
             data[obj] = value;
         }
+
+        for (var i =0; i < d.length;i++){
+            var obj = d[i]["item"];
+            var value =  parseFloat(d[i]["revenue"]);
+            percentage_dic[obj] = value / total_revenue;
+        }
+
         console.log(data);
  
 
         // set the dimensions and margins of the graph
         var width = 270
-        height = 270
-        margin = 5
+        var height = 270
+        var margin = 5
+        var donutWidth = 40
         // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
         var radius = Math.min(width, height) / 2 - margin
         // append the svg object to the div called 'my_dataviz'
-        var svg = d3.select("#pieChart")
+        var svg = d3.select("#Miniapp_pieChart")
         .append("svg")
         .attr("width", width)
         .attr("height", height)
@@ -46,39 +73,54 @@ function piechart_func(pieChartDataUrl) {
 
         console.log(color);
         // Compute the position of each group on the pie:
-        var pie = d3.pie()
+        var pie = d3.layout.pie().sort(null)
         .value(function(d) {return d.value; })
 
         var data_ready = pie(d3.entries(data))
         // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
-        svg
-        .selectAll('whatever')
+        var path = svg
+        .selectAll('path')
         .data(data_ready)
         .enter()
         .append('path')
         .attr('d', d3.arc()
-        .innerRadius(0)
+        .innerRadius(radius - donutWidth)
         .outerRadius(radius)
         )
         .attr('fill', function(d,i){ return(color(i)); })
         .attr("stroke", "black")
+        .each(function(d){ this._current = d;})
         .style("stroke-width", "2px")
         .style("opacity", 0.7)
 
-        svg
-        .selectAll('mySlices')
-        .data(data_ready)
-        .enter()
-        .append('text')
-        .text(function(d){ return "grp " + d.data.key})
-        .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
-        .style("text-anchor", "middle")
-        .style("font-size", 17)
-});
+        path.on('mouseover', function(percentage_dic) {
+            console.log(percentage_dic)
+			var percent = Math.round(1000 * percentage_dic.value / total_revenue) / 10;
+			tooltip.select('.item').html(percentage_dic.data.key).style('color','black');
+			tooltip.select('.revenue').html(percentage_dic.revenue);
+			tooltip.select('.percent').html(percentage_dic.data.key+" revenue "+percentage_dic.value +" per "+ percent+'%');
+			tooltip.style('display', 'block');
+			tooltip.style('opacity',4);
+
+		});
+
+
+		path.on('mousemove', function(d) {
+			tooltip.style('top', (d3.event.layerY + 10) + 'px')
+			.style('left', (d3.event.layerX - 25) + 'px');
+		});
+
+		path.on('mouseout', function() {
+			tooltip.style('display', 'none');
+			tooltip.style('opacity',0);
+		});
+
+        console.log("fnish miniapp line chart")
+    });
     
 }
 
-function linechart_func(lineChartDataUrl) {
+function MiniApp_linechart_func(lineChartDataUrl) {
 
 
     //Read the data
@@ -86,14 +128,15 @@ function linechart_func(lineChartDataUrl) {
 
     // When reading the csv, I must format variables:
     function(d){
-        console.log("in d function");
+        console.log("in Miniapp_lineChart start line function");
+        console.log(d)
             // set the dimensions and margins of the graph
-        var margin = {top: 10, right: 10, bottom: 10, left: 10},
+        var margin = {top: 20, right: 20, bottom: 20, left: 40},
         width = 500 - margin.left - margin.right,
         height = 360 - margin.top - margin.bottom;
-        console.log("we are in read function ")
+ 
         // append the svg object to the body of the page
-        var svg = d3.select("#lineChart")
+        var svg = d3.selectAll('#Miniapp_lineChart')
         .append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
@@ -126,6 +169,7 @@ function linechart_func(lineChartDataUrl) {
             .x(function(d) { return x(d3.timeParse("%Y-%m-%d")(d.date)) })
             .y(function(d) { return y(d.revenue) })
             )
+        console.log("finished Miniapp_lineChart line ")
         });
    
     // Now I can use this dataset:

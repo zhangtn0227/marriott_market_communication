@@ -1,15 +1,12 @@
-d3.queue()
-    .defer(MiniApp_linechart_func,MiniApp_lineChartDataUrl)
-    .defer(MiniApp_piechart_func,MiniApp_pieChartDataUrl)
-    .defer(ZKT_linechart_func,ZKT_lineChartDataUrl)
-    .defer(ZKT_piechart_func,ZKT_pieChartDataUrl)
-    .defer(MTDP_linechart_func,MTDP_lineChartDataUrl)
-    .defer(MTDP_piechart_func,MTDP_pieChartDataUrl)
+MTDP_queue = d3.queue();
 
-    .await(function(error){
+MTDP_queue.defer(MTDP_linechart_func,MTDP_lineChartDataUrl);
+MTDP_queue.defer(MTDP_piechart_func,MTDP_pieChartDataUrl);
+
+MTDP_queue.await(function(error){
         if(error) throw error;
         console.log("There is a error");
-    })
+    });
 
 
 function MiniApp_piechart_func(pieChartDataUrl) {
@@ -459,12 +456,12 @@ function MTDP_linechart_func(lineChartDataUrl) {
 
     // When reading the csv, I must format variables:
     function(d){
-        console.log("in d function");
+        console.log("in MTDP start line function");
             // set the dimensions and margins of the graph
         var margin = {top: 20, right: 20, bottom: 20, left: 40},
         width = 500 - margin.left - margin.right,
         height = 360 - margin.top - margin.bottom;
-        console.log("we are in read function ")
+ 
         // append the svg object to the body of the page
         var svg = d3.select("#MTDP_lineChart")
         .append("svg")
@@ -499,6 +496,7 @@ function MTDP_linechart_func(lineChartDataUrl) {
             .x(function(d) { return x(d3.timeParse("%Y-%m-%d")(d.date)) })
             .y(function(d) { return y(d.revenue) })
             )
+        console.log("finished MTDP line ")
         });
    
     // Now I can use this dataset:
